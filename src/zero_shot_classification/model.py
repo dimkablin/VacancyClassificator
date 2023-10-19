@@ -4,7 +4,7 @@ from transformers import pipeline
 
 class Classificator:
     """Zero Shot Classificator on the given classes."""
-    def __init__(self, device='cuda'):
+    def __init__(self, device='cpu'):
         self.pipe = pipeline(
             "zero-shot-classification",
             model="cointegrated/rubert-base-cased-nli-threeway",
