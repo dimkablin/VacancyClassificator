@@ -6,7 +6,7 @@ Python
 Machine learning
 эконометрика
 Deep learning
-1C
+программа 1С
 SQL
 Маркетинг
 Программирование

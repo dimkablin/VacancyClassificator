@@ -13,14 +13,17 @@ class Classificator:
 
         self.classes = None
 
-    def init_classes(self, path):
+    def init_classes(self, classes):
         """Set possible classes."""
         # Clear classes
         self.classes = []
 
-        with open(path, "r", encoding="utf-8") as file:
-            for line in file:
-                self.classes.append(line.strip())
+        if isinstance(classes, list):
+            self.classes = classes
+        else:
+            with open(classes, "r", encoding="utf-8") as file:
+                for line in file:
+                    self.classes.append(line.strip())
 
     def predict(self, text, allow_multi_labels=True, thresh=0.5):
         """Predict classes function."""
