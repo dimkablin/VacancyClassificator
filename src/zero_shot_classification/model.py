@@ -33,11 +33,12 @@ class Classificator:
         preds = self.pipe(text, self.classes, allow_multi_labels=allow_multi_labels)
 
         # Filter labels by its score
-        result = [
-            predict for predict, score in zip(preds['labels'], preds['scores']) if score > thresh
-        ]
-
-        if not result:
+        result = []
+        if allow_multi_labels:
+            result = [
+                pred for pred, score in zip(preds['labels'], preds['scores']) if score > thresh
+            ]
+        elif not result:
             index = preds['scores'].index(max(preds['scores']))
             result.append(preds['labels'][index])
 
