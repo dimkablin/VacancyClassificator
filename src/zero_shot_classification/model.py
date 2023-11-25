@@ -2,7 +2,7 @@
 from transformers import pipeline
 
 
-class Classificator:
+class ZeroShotClassificator:
     """Zero Shot Classificator on the given classes."""
     def __init__(self, device='cpu'):
         self.pipe = pipeline(
