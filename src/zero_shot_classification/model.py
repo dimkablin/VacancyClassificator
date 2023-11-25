@@ -7,7 +7,7 @@ class ZeroShotClassificator:
     def __init__(self, device='cpu'):
         self.pipe = pipeline(
             "zero-shot-classification",
-            model="cointegrated/rubert-base-cased-nli-threeway",
+            model="MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7",
             device=device
         )
 
