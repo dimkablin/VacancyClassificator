@@ -1,5 +1,6 @@
 """implementation semantic search model from HF"""
-from sentence_transformers import SentenceTransformer
+import torch
+from transformers import AutoTokenizer, AutoModel
 from sklearn.metrics.pairwise import cosine_similarity
 
 
@@ -9,10 +10,8 @@ class SemanticClassificator:
     def __init__(self) -> None:
         self.classes = None
         self.classes_embeddings = None
-        self.model = SentenceTransformer(
-            "sentence-transformers/average_word_embeddings_glove.6B.300d"
-        )
-
+        self.tokenizer = AutoTokenizer.from_pretrained("cointegrated/LaBSE-en-ru")
+        self.model = AutoModel.from_pretrained("cointegrated/LaBSE-en-ru")
 
     def init_classes(self, classes):
         """Set possible classes. 
@@ -42,7 +41,20 @@ class SemanticClassificator:
                 for line in file:
                     self.classes.append(line.strip())
 
-        self.classes_embeddings = self.model.encode(self.classes)
+        self.classes_embeddings = self.get_embeddings(self.classes)
+
+    def get_embeddings(self, texts: list[str]):
+        """return embedding of the model"""
+        encoded_text = self.tokenizer(texts, padding=True, truncation=True,
+                                      max_length=64, return_tensors='pt')
+
+        with torch.no_grad():
+            model_output = self.model(**encoded_text)
+
+        embeddings = model_output.pooler_output
+        embeddings = torch.nn.functional.normalize(embeddings)
+
+        return embeddings
 
     def predict(self, text: str, thresh=None):
         """Find the nearest sentance
@@ -55,7 +67,7 @@ class SemanticClassificator:
            dict: keys: "class", "similarity" 
         """
 
-        text_embeddings = self.model.encode([text])
+        text_embeddings = self.get_embeddings([text])
         similarities = cosine_similarity(text_embeddings, self.classes_embeddings)[0]
 
         result = []
